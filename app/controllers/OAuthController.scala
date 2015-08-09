@@ -30,6 +30,8 @@ object OAuthController extends Controller {
 
     def twitterOAuthCallback(hash: String) = Action.async { implicit request =>
         println("callback...")
+        Future(Ok("hoge"))
+        /*
         val result: Option[Future[User]] = for {
             twitter <- Cache.getAs[Twitter]("twitter_" + hash)
             requestToken <- Cache.getAs[RequestToken]("requestToken_" + hash)
@@ -89,6 +91,7 @@ object OAuthController extends Controller {
                 Redirect(routes.Application.index)
             }
         }
+        */
     }
 
 }

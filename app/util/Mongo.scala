@@ -16,7 +16,9 @@ import model._
 object Mongo {
 
     private val driver = new MongoDriver
-    private val connection = driver.connection(List(sys.env.getOrElse("TWIFIMONGO_PORT_27017_TCP_ADDR", "localhost:27017")))
+    val ip = sys.env.getOrElse("TWIFIMONGO_PORT_27017_TCP_ADDR", "localhost") + ":27017"
+    println("connecting... : " + ip)
+    private val connection = driver.connection(List(ip))
 
     val db = connection.db("twitter-finance")
     val users = db.collection("users")
