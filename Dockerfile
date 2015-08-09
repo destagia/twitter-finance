@@ -8,5 +8,5 @@ ADD ./ /root
 EXPOSE 40003
 WORKDIR /root
 
-CMD ./target/universal/stage/bin/sgo-database-editor -Dhttp.port=80 -J-Xms128M -J-Xmx512m -J-server
+CMD ./target/universal/stage/bin/twitter-finance -Dhttp.port=80 -J-Xms128M -J-Xmx512m -J-server
 
