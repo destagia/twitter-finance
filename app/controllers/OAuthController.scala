@@ -19,6 +19,7 @@ object OAuthController extends Controller {
     def twitterLogin = Action { implicit request =>
         val twitter: Twitter = (new TwitterFactory()).getInstance()
         val hash: String = Util.getUniqueID()
+        println(request.host)
         val requestToken: RequestToken = twitter.getOAuthRequestToken("http://" + request.host + "/twitter/callback/" + hash)
 
         Cache.set("twitter_" + hash, twitter, 3600 * 34 * 7)
