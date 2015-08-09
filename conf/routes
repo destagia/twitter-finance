@@ -1,0 +1,20 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET        /                                         controllers.Application.index
+
+# Map static resources from the /public folder to the /assets URL path
+GET        /assets/*file                             controllers.Assets.at(path="/public", file)
+GET        /twitter/login                            controllers.OAuthController.twitterLogin
+GET        /twitter/callback/:hash                   controllers.OAuthController.twitterOAuthCallback(hash: String)
+GET        /twitter/timeline                         controllers.TwitterController.getTimeline
+GET        /twitter/profile                          controllers.TwitterController.getProfile
+GET        /records/:year/:month/:day                controllers.Application.itemsWithDate(year: Int, month: Int, day: Int)
+GET        /records                                  controllers.Application.items
+GET        /setting                                  controllers.Application.setting
+POST       /setting                                  controllers.Application.updateSetting
+
+
+GET        /debug/itemView                           controllers.DebugController.item

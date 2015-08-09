@@ -1,0 +1,6 @@
+@(user: miyatin.util.model.User, account: twitter4j.User)
+@items = @{user.todayItems}
+@main("Twitterで収支管理", Some(account)) {
+    <h3>本日購入したもの</h3>
+    @views.html.recordView(items)
+}

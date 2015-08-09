@@ -1,0 +1,14 @@
+@(recordOpt: Option[miyatin.util.model.Record], account: Option[twitter4j.User], y: Int, m: Int, d: Int)
+
+@main("購入したもの", account) {
+    <h3> 購入記録</h3>
+    <p style='text-align: center'>@{y}年@{m}月@{d}日</p>
+    @recordOpt match {
+        case Some(record) => {
+            @views.html.recordView(record.items)
+        }
+        case None => {
+            <p style='text-align: center;'>購入履歴がありません</p>
+        }
+    }
+}

@@ -1,0 +1,6 @@
+@(items: List[miyatin.util.model.Item])
+
+<p id="today_sum">¥ @{items.map(_.price).sum}</p>
+@for(item <- items) {
+    @views.html.itemView(item)
+}

@@ -1,0 +1,20 @@
+@(item: miyatin.util.model.Item)
+
+@item.image match {
+case Some(url) => {
+<table class="item">
+    <tr>
+        <td style='width: 130px'>
+            <div class='item_image_container'><img class='item_image' src="@url"></div>
+        </td>
+}
+case None => {
+<table class="item" style="height: 64px">
+    <tr>
+}}
+        <td class='item_right' style='position: relative;'>
+            <p class="item_sentence">@item.sentence</p>
+            <span class='item_price'>@item.price 円</span>
+        </td>
+    </tr>
+</table>

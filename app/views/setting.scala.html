@@ -1,0 +1,12 @@
+@(user: miyatin.util.model.User, account: twitter4j.User, settingForm: Form[controllers.Application.SettingForm])
+@import helper._
+
+@main("設定", Some(account)) {
+    <h3>設定</h3>
+    @helper.form(action = routes.Application.updateSetting) {
+        @helper.checkbox(settingForm("timelineNotify"), 'label -> "Twitterへの通知")
+        @helper.inputText(settingForm("hashTag"), 'label -> "収支管理に使うタグ")
+        <input type='submit'>
+    }
+    </form>
+}

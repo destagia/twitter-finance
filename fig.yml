@@ -1,0 +1,10 @@
+twifimongo:
+  image: dockerfile/mongodb:latest
+  volumes:
+    - ~/twitter-finance:/data/db
+twificli:
+  build: .
+  ports:
+    - "40003:80"
+  links:
+    - twifimongo:twifimongo
