@@ -43,12 +43,16 @@ object OAuthController extends Controller {
             Cache.remove("requestToken_" + hash)
             for {
                 accessToken <- Future(twitter.getOAuthAccessToken(requestToken, authVerifier))
+                _ <- Future(println("get access token..."))
                 (accessTokenSt, accessTokenSecretSt) <- Future {
                     (accessToken.getToken, accessToken.getTokenSecret)
                 }
+                _ <- Future(println("create tuple..."))
                 userOpt <- Mongo.findUser(twitter.getId())
+                _ <- Future(println("access mongo..."))
                 user <- userOpt match {
                     case None =>
+                        println("not exist user")
                         val paging = new twitter4j.Paging(1, 1)
                         val user = User(
                             hash,
@@ -59,10 +63,13 @@ object OAuthController extends Controller {
                             Nil,
                             UserSettings.default(hash)
                         )
+                        println("insert user...")
                         Mongo.insert(user).map(_ => user)
 
                     case Some(user) => {
+                        println("exist user")
                         Cache.remove("twitter_" + hash)
+                        println("remove cache")
                         Future(user)
                     }
                 }
