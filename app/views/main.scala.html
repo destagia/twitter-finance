@@ -20,21 +20,21 @@
         <header>
             <div id="header_left"><h1><a href='/'>Twifi</a></h1></div>
             <div id="header_right">
-                <nav>
                 @account match {
                     case None => {
                         <a href="/twitter/login"><div class='header_button'>ログイン</div></a>
                     }
                     case Some(a) => {
                         <div class='header_button' style="padding-top: 0px; height: 50px">@views.html.loginAccountView(a)</div>
-                        <a href="/records"><div class='header_button'>収支記録</div></a>
-                        <a href='/setting'><div class='header_button'>設定</div></a>
                     }
                 }
-                </nav>
             </div>
         </header>
+        <nav>
+            <a href='/setting'><div class='nav_button'>設定</div></a>
+            <a href="/records"><div class='nav_button'>収支記録</div></a>
+        </nav>
         <main class="box">@content</main>
-        <footer></footer>
+        <footer><!--Twifi - Shohei Miyashita 2015 All Right Reservied. --></footer>
     </body>
 </html>

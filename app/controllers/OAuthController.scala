@@ -13,6 +13,7 @@ import collection.JavaConversions._
 import miyatin.util._
 import miyatin.util.model._
 import reactivemongo.core.commands.LastError
+import play.api.Play.current
 
 object OAuthController extends Controller {
 
@@ -20,7 +21,8 @@ object OAuthController extends Controller {
         println("login..")
         val twitter: Twitter = (new TwitterFactory()).getInstance()
         val hash: String = Util.getUniqueID()
-        val requestToken: RequestToken = twitter.getOAuthRequestToken("http://twifi.miyatin.pw/twitter/callback/" + hash)
+        val baseURL = current.configuration.getString("baseUrl").getOrElse("news.miyatin.pw")
+        val requestToken: RequestToken = twitter.getOAuthRequestToken("http://" + baseURL + "/twitter/callback/" + hash)
         println("get token...")
         Cache.set("twitter_" + hash, twitter, 3600 * 34 * 7)
         Cache.set("requestToken_" + hash, requestToken, 120)

@@ -51,7 +51,8 @@ object Application extends Controller {
         val form = settingForm.bindFromRequest.get
         Mongo.findUserAndM(user => for {
             account <- user.account
-            newUser = user.copy(settings = UserSettings(user.id, form.timelineNotify, form.hashTag))
+            newUser = user.copy(settings = UserSettings(
+                user.id, form.timelineNotify, if (form.hashTag == "") user.settings.hashTag else form.hashTag))
             _ <- Mongo.updateUser(newUser)
         } yield {
             Ok(views.html.index(newUser, account))
