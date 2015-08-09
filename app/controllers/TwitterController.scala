@@ -8,7 +8,7 @@ import miyatin.util._
 
 import reactivemongo.bson.BSONDocument
 import scala.concurrent._
-import scala.concurrent.ExecutionContext.Implicits.global
+import miyatin.util.Implicits._
 import scala.concurrent.duration._
 import collection.JavaConversions._
 import scalaz._, Scalaz._

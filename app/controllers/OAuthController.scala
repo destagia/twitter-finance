@@ -8,7 +8,7 @@ import play.api.cache._
 import play.api.Play.current
 import scala.concurrent.duration._
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import miyatin.util.Implicits._
 import collection.JavaConversions._
 import miyatin.util._
 import miyatin.util.model._

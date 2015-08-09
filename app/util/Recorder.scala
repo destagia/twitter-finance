@@ -2,7 +2,7 @@ package miyatin.util
 
 import java.util.{Calendar, Date}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import miyatin.util.Implicits._
 import scala.concurrent.duration._
 import scala.concurrent.{Future, Await}
 import java.util.concurrent.TimeUnit

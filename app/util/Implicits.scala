@@ -1,9 +1,16 @@
 package miyatin.util
 
+import scala.concurrent._
+import java.util.concurrent.Executors
+import scala.language.implicitConversions
+
 import java.util.{Date, Calendar, TimeZone}
 
 object Implicits {
     implicit def stringToCharSequence(s: String): CharSequence = s.asInstanceOf[CharSequence]
+
+    private val pool = Executors.newCachedThreadPool()
+    implicit val executionContext = ExecutionContext.fromExecutorService(pool)
 
     implicit class DateExtension(date: Date) {
         val calendar = Calendar.getInstance()

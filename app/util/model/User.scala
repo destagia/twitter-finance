@@ -6,7 +6,7 @@ import twitter4j.auth._
 import play.api.cache._
 import scala.concurrent.{Future, Await}
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
+import miyatin.util.Implicits._
 import scala.util.{Try, Success, Failure}
 import collection.JavaConversions._
 import miyatin.util.Implicits._

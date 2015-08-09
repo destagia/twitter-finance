@@ -8,7 +8,7 @@ import play.api.mvc.{Result, Request}
 import play.api.mvc.Results.BadRequest
 import play.api.libs.json.{JsObject, Json}
 import twitter4j.Twitter
-import scala.concurrent.ExecutionContext.Implicits.global
+import miyatin.util.Implicits._
 import scala.concurrent.Future
 import scalaz._, Scalaz._
 import model._

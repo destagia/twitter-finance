@@ -12,11 +12,11 @@ import play.api.data.Forms._
 import play.api.data.format.Formats._
 import scala.concurrent.duration._
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import miyatin.util.Implicits._
 import miyatin.util._
 import miyatin.util.model._
 import scalaz._, Scalaz._
-import Implicits._
+import miyatin.util.Implicits._
 
 object Application extends Controller {
 

@@ -12,3 +12,5 @@ libraryDependencies ++= Seq(
   "log4j"             %  "log4j"                % "1.2.14",
   "org.reactivemongo" %% "reactivemongo"        % "0.10.5.0.akka23"
 )
+
+scalacOptions ++= Seq("-feature")
