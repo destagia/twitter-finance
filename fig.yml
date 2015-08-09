@@ -1,5 +1,7 @@
 twifimongo:
   image: dockerfile/mongodb:latest
+  ports:
+    - "27017:27017"
   volumes:
     - ~/twitter-finance:/data/db
 twificli:
