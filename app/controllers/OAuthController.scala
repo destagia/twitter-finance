@@ -17,18 +17,19 @@ import reactivemongo.core.commands.LastError
 object OAuthController extends Controller {
 
     def twitterLogin = Action { implicit request =>
+        println("login..")
         val twitter: Twitter = (new TwitterFactory()).getInstance()
         val hash: String = Util.getUniqueID()
-        println(request.host)
-        val requestToken: RequestToken = twitter.getOAuthRequestToken("http://twifi.miyatin.pw/twitter/callback/" + hash)
-
+        val requestToken: RequestToken = twitter.getOAuthRequestToken("http://" + request.host + "/twitter/callback/" + hash)
+        println("get token...")
         Cache.set("twitter_" + hash, twitter, 3600 * 34 * 7)
         Cache.set("requestToken_" + hash, requestToken, 120)
-
+        println("redirect to authorized url")
         Redirect(requestToken.getAuthorizationURL())
     }
 
     def twitterOAuthCallback(hash: String) = Action.async { implicit request =>
+        println("callback...")
         val result: Option[Future[User]] = for {
             twitter <- Cache.getAs[Twitter]("twitter_" + hash)
             requestToken <- Cache.getAs[RequestToken]("requestToken_" + hash)
@@ -38,6 +39,7 @@ object OAuthController extends Controller {
             authVerifier <- authVerifierSeq.headOption
         }
         yield {
+            println("clear twitter...")
             Cache.remove("requestToken_" + hash)
             for {
                 accessToken <- Future(twitter.getOAuthAccessToken(requestToken, authVerifier))
@@ -67,14 +69,16 @@ object OAuthController extends Controller {
             }
             yield user
         }
-
+        println("redirect...")
         result match {
             case Some(f) =>
                 f.map { user =>
+                    println("go...")
                     Redirect(routes.Application.index)
                     .withCookies(Cookie("id", user.id, Some(3600 * 24 * 7)))
                 }
             case None => Future {
+                println("faild...")
                 Redirect(routes.Application.index)
             }
         }
