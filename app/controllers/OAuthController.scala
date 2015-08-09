@@ -81,8 +81,9 @@ object OAuthController extends Controller {
             case Some(f) =>
                 f.map { user =>
                     println("go...")
-                    Redirect(routes.Application.index)
-                    .withCookies(Cookie("id", user.id, Some(3600 * 24 * 7)))
+                    Ok("Hello")
+                    // Redirect(routes.Application.index)
+                    // .withCookies(Cookie("id", user.id, Some(3600 * 24 * 7)))
                 }
             case None => Future {
                 println("faild...")
