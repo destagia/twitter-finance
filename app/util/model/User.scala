@@ -13,6 +13,7 @@ import miyatin.util.Implicits._
 import miyatin.util._
 import java.util.Date
 import java.util.Calendar
+import scala.collection.mutable.{Map => Pool}
 
 case class User(
     id: String,                 // Twitter-finance上での識別ID
@@ -25,7 +26,14 @@ case class User(
 ) {
     @volatile private var accountCache: Option[(Account, Calendar)] = None
 
-    def updateAccount(c: Calendar) =  twitter.map { t =>
+    def updatePool: User = {
+        User.pool += id -> this
+        User.poolByTwitterId += twitterId -> this
+        this
+    }
+
+    def updateAccount(c: Calendar) = twitter.map { t =>
+        println("update account")
         val newAccount = t.verifyCredentials() // Twitterアカウントを取得
         accountCache = Some((newAccount, c))
         newAccount
@@ -36,7 +44,7 @@ case class User(
         accountCache match {
             case None => updateAccount(current)
             case Some((cachedAccount, cal)) =>
-                if (current.getTime.getTime - cal.getTime.getTime > 5 * 60 * 10000)
+                if (current.getTime.getTime - cal.getTime.getTime > 5 * 60 * 1000)
                     updateAccount(current)
                 else
                     Future(cachedAccount)
@@ -55,14 +63,27 @@ case class User(
         }
     }
 
-    def today: Future[List[Status]] =
-        lastTweetId match {
-            case Some(sinceId) =>
-                val paging = new Paging(sinceId)
-                twitter.map(_.getUserTimeline(paging).toList)
-
-            case None => Future(Nil)
-        }
+    @volatile var timelineCache: Option[(List[Status], Calendar)] = None
+    def updateTimeline(c: Calendar, sinceId: Long) = twitter map { t =>
+        val paging = new Paging(sinceId)
+        val newTL = t.getUserTimeline(paging).toList
+        timelineCache = Some((newTL, c))
+        newTL
+    }
+    def today: Future[List[Status]] = {
+        for {
+            sinceId <- lastTweetId
+            (l, c) <- timelineCache
+        } yield (sinceId, l, c)
+    } match {
+        case None => Future(Nil)
+        case Some((s, cachedTimeLine, c)) =>
+            val current = Util.getCurrentDate
+            if (current.getTime.getTime - c.getTime.getTime > 5 * 60 * 1000)
+                updateTimeline(current, s)
+            else
+                Future(cachedTimeLine)
+    }
 
     def todayItems = Await.result(todayWithItems.map(_._1), Duration.Inf)
 
@@ -124,6 +145,12 @@ case class User(
 }
 object User {
     val twitterFactory = new TwitterFactory()
+
+    private val pool = Pool[String, User]()
+    private val poolByTwitterId = Pool[Long, User]()
+
+    def getCache(i: String) = pool.get(i)
+    def getCache(l: Long) = poolByTwitterId.get(l)
 
     implicit val bsonWriter = new BSONDocumentWriter[User]() {
         def write(u: User) =

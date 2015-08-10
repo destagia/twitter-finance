@@ -12,6 +12,8 @@ import miyatin.util.Implicits._
 import scala.concurrent.Future
 import scalaz._, Scalaz._
 import model._
+import scala.collection.mutable.{Map => Cache}
+import java.util.Calendar
 
 object Mongo {
 
@@ -40,17 +42,30 @@ object Mongo {
     def findUsers: Future[List[User]] =
         users.find(BSONDocument()).cursor[User].collect[List]()
 
-    def findUser(twitterId: Long): Future[Option[User]] =
-        users.find(BSONDocument("twitterId" -> twitterId)).cursor[User].headOption
+    def findUser(query: BSONDocument): Future[Option[User]] = users.find(query).cursor[User].headOption.map(_ match {
+        case Some(user) => User.getCache(user.id) match {
+            case None => Some(user.updatePool)
+            case cache => cache
+        }
+        case None => None
+    })
 
-    def findUser(query: BSONDocument): Future[Option[User]] =
-        users.find(query).cursor[User].headOption
+    def findUser(id: String): Future[Option[User]] = User.getCache(id) match {
+        case None => findUser(BSONDocument("id" -> id)).map(_.map(_.updatePool))
+        case Some(user) => Future(Some(user))
+    }
+
+    def findUser(twitterId: Long): Future[Option[User]] = User.getCache(twitterId) match {
+        case None => findUser(BSONDocument("twitterId" -> twitterId)).map(_.map(_.updatePool))
+        case Some(user) => Future(Some(user))
+    }
 
     def findRecord(query: BSONDocument): Future[Option[Record]] =
         records.find(query).cursor[Record].headOption
 
-    def updateUser(user: User) =
+    def updateUser(user: User) = {
         users.update(BSONDocument("twitterId" -> user.twitterId), user)
+    }
 
     def findRecord(userId: String, dateInt: Int): Future[Option[Record]] =
         findRecord(BSONDocument("userId" -> userId, "date" -> dateInt))
@@ -92,7 +107,7 @@ object Mongo {
 
     def findUserWithRequest(implicit request: Request[_]): Future[Option[User]] =
         request.cookies.get("id") match {
-            case Some(cookie) => Mongo.findUser(BSONDocument("id" -> cookie.value))
+            case Some(cookie) => Mongo.findUser(cookie.value)
             case None => Future(None)
         }
 
