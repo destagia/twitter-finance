@@ -329,23 +329,6 @@
     </span>
       
     </li><li name="miyatin.util.Mongo#findUser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="findUser(query:reactivemongo.bson.BSONDocument):scala.concurrent.Future[Option[miyatin.util.model.User]]"></a>
-      <a id="findUser(BSONDocument):Future[Option[User]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">findUser</span><span class="params">(<span name="query">query: <span class="extype" name="reactivemongo.bson.BSONDocument">BSONDocument</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Option">Option</span>[<a href="model/User.html" class="extype" name="miyatin.util.model.User">User</a>]]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../index.html#miyatin.util.Mongo$@findUser(query:reactivemongo.bson.BSONDocument):scala.concurrent.Future[Option[miyatin.util.model.User]]" title="Permalink" target="_top">
-        <img src="../../lib/permalink.png" />
-      </a>
-    </span>
-      
-    </li><li name="miyatin.util.Mongo#findUser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="findUser(twitterId:Long):scala.concurrent.Future[Option[miyatin.util.model.User]]"></a>
       <a id="findUser(Long):Future[Option[User]]"></a>
       <h4 class="signature">
@@ -358,6 +341,40 @@
       </span>
       </h4><span class="permalink">
       <a href="../../index.html#miyatin.util.Mongo$@findUser(twitterId:Long):scala.concurrent.Future[Option[miyatin.util.model.User]]" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" />
+      </a>
+    </span>
+      
+    </li><li name="miyatin.util.Mongo#findUser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="findUser(id:String):scala.concurrent.Future[Option[miyatin.util.model.User]]"></a>
+      <a id="findUser(String):Future[Option[User]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">findUser</span><span class="params">(<span name="id">id: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Option">Option</span>[<a href="model/User.html" class="extype" name="miyatin.util.model.User">User</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#miyatin.util.Mongo$@findUser(id:String):scala.concurrent.Future[Option[miyatin.util.model.User]]" title="Permalink" target="_top">
+        <img src="../../lib/permalink.png" />
+      </a>
+    </span>
+      
+    </li><li name="miyatin.util.Mongo#findUser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="findUser(query:reactivemongo.bson.BSONDocument):scala.concurrent.Future[Option[miyatin.util.model.User]]"></a>
+      <a id="findUser(BSONDocument):Future[Option[User]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">findUser</span><span class="params">(<span name="query">query: <span class="extype" name="reactivemongo.bson.BSONDocument">BSONDocument</span></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="scala.Option">Option</span>[<a href="model/User.html" class="extype" name="miyatin.util.model.User">User</a>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../index.html#miyatin.util.Mongo$@findUser(query:reactivemongo.bson.BSONDocument):scala.concurrent.Future[Option[miyatin.util.model.User]]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" />
       </a>
     </span>
@@ -703,18 +720,18 @@
     </span>
       
     </li><li name="miyatin.util.Mongo#updateUser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="updateUser(user:miyatin.util.model.User):scala.concurrent.Future[reactivemongo.core.commands.LastError]"></a>
-      <a id="updateUser(User):Future[LastError]"></a>
+      <a id="updateUser(user:miyatin.util.model.User,old:Option[miyatin.util.model.User]):scala.concurrent.Future[reactivemongo.core.commands.LastError]"></a>
+      <a id="updateUser(User,Option[User]):Future[LastError]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">updateUser</span><span class="params">(<span name="user">user: <a href="model/User.html" class="extype" name="miyatin.util.model.User">User</a></span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="reactivemongo.core.commands.LastError">LastError</span>]</span>
+        <span class="name">updateUser</span><span class="params">(<span name="user">user: <a href="model/User.html" class="extype" name="miyatin.util.model.User">User</a></span>, <span name="old">old: <span class="extype" name="scala.Option">Option</span>[<a href="model/User.html" class="extype" name="miyatin.util.model.User">User</a>]</span>)</span><span class="result">: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="reactivemongo.core.commands.LastError">LastError</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../index.html#miyatin.util.Mongo$@updateUser(user:miyatin.util.model.User):scala.concurrent.Future[reactivemongo.core.commands.LastError]" title="Permalink" target="_top">
+      <a href="../../index.html#miyatin.util.Mongo$@updateUser(user:miyatin.util.model.User,old:Option[miyatin.util.model.User]):scala.concurrent.Future[reactivemongo.core.commands.LastError]" title="Permalink" target="_top">
         <img src="../../lib/permalink.png" />
       </a>
     </span>
