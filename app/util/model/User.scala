@@ -1,7 +1,7 @@
 package miyatin.util.model
 
 import reactivemongo.bson._
-import twitter4j.{User => TwitterUser, TwitterFactory, Twitter, Query, Paging, _}
+import twitter4j.{User => Account, TwitterFactory, Twitter, Query, Paging, _}
 import twitter4j.auth._
 import play.api.cache._
 import scala.concurrent.{Future, Await}
@@ -12,6 +12,7 @@ import collection.JavaConversions._
 import miyatin.util.Implicits._
 import miyatin.util._
 import java.util.Date
+import java.util.Calendar
 
 case class User(
     id: String,                 // Twitter-finance上での識別ID
@@ -22,7 +23,25 @@ case class User(
     records: List[Record],      // 今までのレコード
     settings: UserSettings
 ) {
-    lazy val account: Future[TwitterUser] = twitter.map(_.verifyCredentials())
+    @volatile private var accountCache: Option[(Account, Calendar)] = None
+
+    def updateAccount(c: Calendar) =  twitter.map { t =>
+        val newAccount = t.verifyCredentials() // Twitterアカウントを取得
+        accountCache = Some((newAccount, c))
+        newAccount
+    }
+
+    def account: Future[Account] = {
+        val current = Util.getCurrentDate
+        accountCache match {
+            case None => updateAccount(current)
+            case Some((cachedAccount, cal)) =>
+                if (current.getTime.getTime - cal.getTime.getTime > 5 * 60 * 10000)
+                    updateAccount(current)
+                else
+                    Future(cachedAccount)
+        }
+    }
 
     def twitter: Future[Twitter] = Future {
         controllers.Application.getCache(id) match {
@@ -35,6 +54,15 @@ case class User(
                 twitter
         }
     }
+
+    def today: Future[List[Status]] =
+        lastTweetId match {
+            case Some(sinceId) =>
+                val paging = new Paging(sinceId)
+                twitter.map(_.getUserTimeline(paging).toList)
+
+            case None => Future(Nil)
+        }
 
     def todayItems = Await.result(todayWithItems.map(_._1), Duration.Inf)
 
@@ -90,15 +118,6 @@ case class User(
             } yield ()
         else Future(())
     }
-
-    def today: Future[List[Status]] =
-        lastTweetId match {
-            case Some(sinceId) =>
-                val paging = new Paging(sinceId)
-                twitter.map(_.getUserTimeline(paging).toList)
-
-            case None => Future(Nil)
-        }
 
     def recordByDate(target: Date) = Mongo.findRecord(id, target.toIntDate)
 
