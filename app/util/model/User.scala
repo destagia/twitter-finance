@@ -38,14 +38,14 @@ case class User(
         this
     }
 
-    def updateAccount(c: Calendar) = twitter.map { t =>
+    private def updateAccount(c: Calendar) = twitter.map { t =>
         println("update account")
         val newAccount = t.verifyCredentials() // Twitterアカウントを取得
         accountCache = Some((newAccount, c))
         newAccount
     }
 
-    def updateTimeline(c: Calendar, sinceId: Long) = twitter map { t =>
+    private def updateTimeline(c: Calendar, sinceId: Long) = twitter map { t =>
         val paging = new Paging(sinceId)
         val newTL = t.getUserTimeline(paging).toList
         timelineCache = Some((newTL, c))
@@ -53,18 +53,18 @@ case class User(
     }
 
     def today: Future[List[Status]] = {
-        for {
-            sinceId <- lastTweetId
-            (l, c) <- timelineCache
-        } yield (sinceId, l, c)
-    } match {
-        case None => Future(Nil)
-        case Some((s, cachedTimeLine, c)) =>
-            val current = Util.getCurrentDate
-            if (current.getTime.getTime - c.getTime.getTime > 5 * 60 * 1000)
-                updateTimeline(current, s)
-            else
-                Future(cachedTimeLine)
+        val current = Util.getCurrentDate
+        lastTweetId match {
+            case None => Future(Nil)
+            case Some(s) => timelineCache match {
+                case Some((cache, d)) =>
+                    if (current.getTime.getTime - d.getTime.getTime > 5 * 60 * 1000)
+                        updateTimeline(current, s)
+                    else
+                        Future(cache)
+                case None => updateTimeline(current, s)
+            }
+        }
     }
 
     def account: Future[Account] = {
