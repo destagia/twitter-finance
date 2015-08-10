@@ -53,7 +53,7 @@ object Application extends Controller {
             account <- user.account
             newUser = user.copy(settings = UserSettings(
                 user.id, form.timelineNotify, if (form.hashTag == "") user.settings.hashTag else form.hashTag))
-            _ <- Mongo.updateUser(newUser)
+            _ <- Mongo.updateUser(newUser, Some(user))
         } yield {
             Ok(views.html.index(newUser, account))
         })

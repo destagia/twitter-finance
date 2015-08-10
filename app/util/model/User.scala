@@ -25,6 +25,12 @@ case class User(
     settings: UserSettings
 ) {
     @volatile private var accountCache: Option[(Account, Calendar)] = None
+    @volatile private var timelineCache: Option[(List[Status], Calendar)] = None
+
+    def moveCache(old: User) = {
+        accountCache = old.accountCache
+        timelineCache = old.timelineCache
+    }
 
     def updatePool: User = {
         User.pool += id -> this
@@ -37,6 +43,28 @@ case class User(
         val newAccount = t.verifyCredentials() // Twitterアカウントを取得
         accountCache = Some((newAccount, c))
         newAccount
+    }
+
+    def updateTimeline(c: Calendar, sinceId: Long) = twitter map { t =>
+        val paging = new Paging(sinceId)
+        val newTL = t.getUserTimeline(paging).toList
+        timelineCache = Some((newTL, c))
+        newTL
+    }
+
+    def today: Future[List[Status]] = {
+        for {
+            sinceId <- lastTweetId
+            (l, c) <- timelineCache
+        } yield (sinceId, l, c)
+    } match {
+        case None => Future(Nil)
+        case Some((s, cachedTimeLine, c)) =>
+            val current = Util.getCurrentDate
+            if (current.getTime.getTime - c.getTime.getTime > 5 * 60 * 1000)
+                updateTimeline(current, s)
+            else
+                Future(cachedTimeLine)
     }
 
     def account: Future[Account] = {
@@ -61,28 +89,6 @@ case class User(
                 controllers.Application.setCache(id, twitter)
                 twitter
         }
-    }
-
-    @volatile var timelineCache: Option[(List[Status], Calendar)] = None
-    def updateTimeline(c: Calendar, sinceId: Long) = twitter map { t =>
-        val paging = new Paging(sinceId)
-        val newTL = t.getUserTimeline(paging).toList
-        timelineCache = Some((newTL, c))
-        newTL
-    }
-    def today: Future[List[Status]] = {
-        for {
-            sinceId <- lastTweetId
-            (l, c) <- timelineCache
-        } yield (sinceId, l, c)
-    } match {
-        case None => Future(Nil)
-        case Some((s, cachedTimeLine, c)) =>
-            val current = Util.getCurrentDate
-            if (current.getTime.getTime - c.getTime.getTime > 5 * 60 * 1000)
-                updateTimeline(current, s)
-            else
-                Future(cachedTimeLine)
     }
 
     def todayItems = Await.result(todayWithItems.map(_._1), Duration.Inf)
@@ -128,7 +134,7 @@ case class User(
         }
         _ <- notifyRecordToTwitter(r)
         _ <- Mongo.insertOrUpdate(r)
-        _ <- Mongo.updateUser(copy(lastTweetId = Some(list.head.getId)))
+        _ <- Mongo.updateUser(copy(lastTweetId = Some(list.head.getId)), Some(this))
     } yield ()
 
     def notifyRecordToTwitter(r: Record): Future[Unit] = {

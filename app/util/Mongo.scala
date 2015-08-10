@@ -63,8 +63,15 @@ object Mongo {
     def findRecord(query: BSONDocument): Future[Option[Record]] =
         records.find(query).cursor[Record].headOption
 
-    def updateUser(user: User) = {
-        users.update(BSONDocument("twitterId" -> user.twitterId), user)
+    def updateUser(user: User, old: Option[User]) = {
+        val update = users.update(BSONDocument("twitterId" -> user.twitterId), user)
+        update onComplete {
+            case scala.util.Success(_) =>
+                old.foreach(user.moveCache)
+                user.updatePool
+            case scala.util.Failure(_) => println(user.id + " : Failed upadte user...")
+        }
+        update
     }
 
     def findRecord(userId: String, dateInt: Int): Future[Option[Record]] =
