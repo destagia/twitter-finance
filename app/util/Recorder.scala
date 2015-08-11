@@ -17,12 +17,11 @@ object Recorder {
         // 1日に一回記録作業を行う。
         // TimeUnit.DAYS.sleep(1)
         // デバッグ用に1分に一回記録作業を行う。
+        var recorded = false;
         while (true) {
             TimeUnit.MINUTES.sleep(1)
-            val date = new Date();
-            val calendar = Calendar.getInstance()
-            calendar.setTime(date)
-            if (calendar.get(Calendar.HOUR_OF_DAY) == 0) {
+            val calendar = Util.getCurrentDate
+            if (recorded ^ calendar.get(Calendar.HOUR_OF_DAY) == 0) {
                 // 全ユーザーを取得，recordを開始。
                 val record = for {
                     users <- Mongo.findUsers
@@ -36,8 +35,9 @@ object Recorder {
                 println("[Twifi] Recording...")
                 Await.result(record, Duration.Inf)
                 println("[Twifi] Record.")
+                recorded = true
             }
-
+            recorded = calendar.get(Calendar.HOUR_OF_DAY) == 0
         }
 
     }
