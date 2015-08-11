@@ -69,7 +69,7 @@ object Application extends Controller {
 
     def items = {
         val c = Util.getCurrentDate
-        itemsWithDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH))
+        itemsWithDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH) - 1)
     }
 
     def itemsWithDate(y: Int, m: Int, d: Int) = Action.async { implicit request =>

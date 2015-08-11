@@ -17,6 +17,11 @@ import play.api.Play.current
 
 object OAuthController extends Controller {
 
+    def twitterLogout = Action {
+        Redirect(routes.Application.index)
+        .withCookies(Cookie("id", "", None))
+    }
+
     def twitterLogin = Action { implicit request =>
         println("login..")
         val twitter: Twitter = (new TwitterFactory()).getInstance()

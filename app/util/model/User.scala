@@ -58,7 +58,7 @@ case class User(
             case None => Future(Nil)
             case Some(s) => timelineCache match {
                 case Some((cache, d)) =>
-                    if (current.getTime.getTime - d.getTime.getTime > 5 * 60 * 1000)
+                    if (current.getTime.getTime - d.getTime.getTime > User.cacheTime)
                         updateTimeline(current, s)
                     else
                         Future(cache)
@@ -72,7 +72,7 @@ case class User(
         accountCache match {
             case None => updateAccount(current)
             case Some((cachedAccount, cal)) =>
-                if (current.getTime.getTime - cal.getTime.getTime > 5 * 60 * 1000)
+                if (current.getTime.getTime - cal.getTime.getTime > User.cacheTime)
                     updateAccount(current)
                 else
                     Future(cachedAccount)
@@ -130,7 +130,7 @@ case class User(
         (items, list) <- todayWithItems
         r = {
             val d = new Date()
-            Record(Util.getUniqueID(), id, d.toIntDate, items)
+            Record(Util.getUniqueID(), id, d.toIntDate - 1, items)
         }
         _ <- notifyRecordToTwitter(r)
         _ <- Mongo.insertOrUpdate(r)
@@ -154,6 +154,7 @@ object User {
 
     private val pool = Pool[String, User]()
     private val poolByTwitterId = Pool[Long, User]()
+    private val cacheTime = 60 * 1000
 
     def getCache(i: String) = pool.get(i)
     def getCache(l: Long) = poolByTwitterId.get(l)

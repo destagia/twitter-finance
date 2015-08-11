@@ -1,8 +1,25 @@
 @(recordOpt: Option[miyatin.util.model.Record], account: Option[twitter4j.User], y: Int, m: Int, d: Int)
+@max = @{Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)(m - 1)}
+@prev = @{ if (d - 1 > 0) Some(d - 1) else None }
+@next = @{ if (d + 1 <= max) Some(d + 1) else None }
 
 @main("購入したもの", account) {
     <h3> 購入記録</h3>
     <p style='text-align: center'>@{y}年@{m}月@{d}日</p>
+    <p align='center'>
+    @prev match {
+        case Some(prevDay) => {
+        <a href="/records/@y/@m/@{prevDay}">前日</a>
+        }
+        case None => {}
+    }
+    @next match {
+        case Some(nextDay) => {
+        <a href="/records/@y/@m/@{nextDay}">翌日</a>
+        }
+        case None => {}
+    }
+    </p>
     @recordOpt match {
         case Some(record) => {
             @views.html.recordView(record.items)

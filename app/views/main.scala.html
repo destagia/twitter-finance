@@ -31,8 +31,14 @@
             </div>
         </header>
         <nav>
+        @account match {
+            case Some(_) => {
+            <a href="/twitter/logout"><div class='nav_button'>ログアウト</div></a>
             <a href='/setting'><div class='nav_button'>設定</div></a>
             <a href="/records"><div class='nav_button'>収支記録</div></a>
+            }
+            case None => {}
+        }
         </nav>
         <main class="box">@content</main>
         <footer><!--Twifi - Shohei Miyashita 2015 All Right Reservied. --></footer>

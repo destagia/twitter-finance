@@ -18,7 +18,7 @@ object Recorder {
         // TimeUnit.DAYS.sleep(1)
         // デバッグ用に1分に一回記録作業を行う。
         while (true) {
-            TimeUnit.HOURS.sleep(1)
+            TimeUnit.MINUTES.sleep(1)
             val date = new Date();
             val calendar = Calendar.getInstance()
             calendar.setTime(date)

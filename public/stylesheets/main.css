@@ -146,7 +146,7 @@ button {
 
 /* Item View */
 .item {
-    width: 480px;
+    width: 80%;
     height: 128px;
     margin: 0px auto 20px auto;
     border-bottom: dashed 1px #2184FF;
